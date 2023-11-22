@@ -1,5 +1,3 @@
-Certainly! Below is a basic template for a `README.md` file for your project. You can customize and expand it based on the specific details and features of your project.
-
 ```markdown
 # Quote Cryptocurrencies
 
