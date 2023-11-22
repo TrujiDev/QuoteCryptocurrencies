@@ -8,6 +8,11 @@ const search = {
 	cryptocurrency: '',
 };
 
+/**
+ * Retrieves a list of cryptocurrencies.
+ * @param {Array} cryptocurrencies - The list of cryptocurrencies.
+ * @returns {Promise} A promise that resolves with the list of cryptocurrencies.
+ */
 const getCryptocurrency = cryptocurrencies =>
 	new Promise(resolve => {
 		resolve(cryptocurrencies);
@@ -22,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	cryptocurrencySelect.addEventListener('change', readValue);
 });
 
+/**
+ * Fetches the top 10 cryptocurrencies by market capitalization in USD from the Cryptocompare API.
+ * @returns {void}
+ */
 function consultCryptocurrency() {
 	const url = `https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD`;
 
@@ -31,6 +40,11 @@ function consultCryptocurrency() {
 		.then(cryptocurrencies => selectCryptocurrency(cryptocurrencies));
 }
 
+/**
+ * Populates a select element with cryptocurrency options.
+ * 
+ * @param {Array} cryptocurrencies - An array of cryptocurrency objects.
+ */
 function selectCryptocurrency(cryptocurrencies) {
 	cryptocurrencies.forEach(cryptocurrency => {
 		const { FullName, Name } = cryptocurrency.CoinInfo;
@@ -42,10 +56,18 @@ function selectCryptocurrency(cryptocurrencies) {
 	});
 }
 
+/**
+ * Updates the value of a property in the search object based on the event target's name and value.
+ * @param {Event} evt - The event object triggered by the input element.
+ */
 function readValue(evt) {
 	search[evt.target.name] = evt.target.value;
 }
 
+/**
+ * Submits the form and performs necessary validations before calling the API.
+ * @param {Event} evt - The event object representing the form submission.
+ */
 function submitForm(evt) {
 	evt.preventDefault();
 
@@ -59,6 +81,10 @@ function submitForm(evt) {
 	consultAPI();
 }
 
+/**
+ * Displays an error message as a div element on the page for a specified duration.
+ * @param {string} msg - The error message to be displayed.
+ */
 function showAlert(msg) {
 	const error = document.querySelector('.error');
 
@@ -75,6 +101,9 @@ function showAlert(msg) {
 	}
 }
 
+/**
+ * Fetches data from the Cryptocompare API and displays the result.
+ */
 function consultAPI() {
 	const { currency, cryptocurrency } = search;
 
@@ -89,6 +118,16 @@ function consultAPI() {
 		});
 }
 
+/**
+ * Displays the result of a cryptocurrency query.
+ * 
+ * @param {Object} result - The result object containing cryptocurrency data.
+ * @param {number} result.PRICE - The price of the cryptocurrency.
+ * @param {number} result.HIGHDAY - The highest price of the day.
+ * @param {number} result.LOWDAY - The lowest price of the day.
+ * @param {number} result.CHANGEPCT24HOUR - The percentage change in price over the last 24 hours.
+ * @param {string} result.LASTUPDATE - The timestamp of the last update.
+ */
 function showResult(result) {
     clearHTML();
 
@@ -117,12 +156,18 @@ function showResult(result) {
     resultDiv.appendChild(lastUpdate);
 }
 
+/**
+ * Clears the HTML content of the resultDiv element.
+ */
 function clearHTML() {
     while(resultDiv.firstChild) {
         resultDiv.removeChild(resultDiv.firstChild);
     }
 }
 
+/**
+ * Displays a spinner on the page.
+ */
 function spinner() {
     clearHTML();
 
