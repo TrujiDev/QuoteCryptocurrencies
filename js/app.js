@@ -28,21 +28,30 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Fetches the top 10 cryptocurrencies by market capitalization in USD from the Cryptocompare API.
- * @returns {void}
+ * Fetches the top 10 cryptocurrencies by market capitalization and selects them.
+ * @returns {Promise<void>} A promise that resolves when the cryptocurrencies are selected.
  */
-function consultCryptocurrency() {
+async function consultCryptocurrency() {
 	const url = `https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD`;
 
-	fetch(url)
-		.then(response => response.json())
-		.then(data => getCryptocurrency(data.Data))
-		.then(cryptocurrencies => selectCryptocurrency(cryptocurrencies));
+	// fetch(url)
+	// 	.then(response => response.json())
+	// 	.then(data => getCryptocurrency(data.Data))
+	// 	.then(cryptocurrencies => selectCryptocurrency(cryptocurrencies));
+
+	try {
+		const response = await fetch(url);
+		const data = await response.json();
+		const cryptocurrencies = await getCryptocurrency(data.Data);
+		selectCryptocurrency(cryptocurrencies);
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 /**
  * Populates a select element with cryptocurrency options.
- * 
+ *
  * @param {Array} cryptocurrencies - An array of cryptocurrency objects.
  */
 function selectCryptocurrency(cryptocurrencies) {
@@ -103,24 +112,35 @@ function showAlert(msg) {
 
 /**
  * Fetches data from the Cryptocompare API and displays the result.
+ * @async
+ * @function consultAPI
+ * @returns {Promise<void>} A promise that resolves when the API data is fetched and displayed.
  */
-function consultAPI() {
+async function consultAPI() {
 	const { currency, cryptocurrency } = search;
 
 	const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${cryptocurrency}&tsyms=${currency}`;
 
-    spinner();
+	spinner();
 
-	fetch(url)
-		.then(response => response.json())
-		.then(data => {
-			showResult(data.DISPLAY[cryptocurrency][currency]);
-		});
+	// fetch(url)
+	// 	.then(response => response.json())
+	// 	.then(data => {
+	// 		showResult(data.DISPLAY[cryptocurrency][currency]);
+	// 	});
+
+	try {
+		const response = await fetch(url);
+		const data = await response.json();
+		showResult(data.DISPLAY[cryptocurrency][currency]);
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 /**
  * Displays the result of a cryptocurrency query.
- * 
+ *
  * @param {Object} result - The result object containing cryptocurrency data.
  * @param {number} result.PRICE - The price of the cryptocurrency.
  * @param {number} result.HIGHDAY - The highest price of the day.
@@ -129,56 +149,56 @@ function consultAPI() {
  * @param {string} result.LASTUPDATE - The timestamp of the last update.
  */
 function showResult(result) {
-    clearHTML();
+	clearHTML();
 
-    const { PRICE, HIGHDAY, LOWDAY, CHANGEPCT24HOUR, LASTUPDATE } = result;
+	const { PRICE, HIGHDAY, LOWDAY, CHANGEPCT24HOUR, LASTUPDATE } = result;
 
-    const price = document.createElement('P');
-    price.classList.add('price');
-    price.innerHTML = `The price is: <span>${PRICE}</span>`;
+	const price = document.createElement('P');
+	price.classList.add('price');
+	price.innerHTML = `The price is: <span>${PRICE}</span>`;
 
-    const highPrice = document.createElement('P');
-    highPrice.innerHTML = `<p>Highest price of the day: <span>${HIGHDAY}</span></p>`;
+	const highPrice = document.createElement('P');
+	highPrice.innerHTML = `<p>Highest price of the day: <span>${HIGHDAY}</span></p>`;
 
-    const lowPrice = document.createElement('P');
-    lowPrice.innerHTML = `<p>Lowest price of the day: <span>${LOWDAY}</span></p>`;
+	const lowPrice = document.createElement('P');
+	lowPrice.innerHTML = `<p>Lowest price of the day: <span>${LOWDAY}</span></p>`;
 
-    const lastHours = document.createElement('P');
-    lastHours.innerHTML = `<p>Last 24 hours: <span>${CHANGEPCT24HOUR}%</span></p>`;
+	const lastHours = document.createElement('P');
+	lastHours.innerHTML = `<p>Last 24 hours: <span>${CHANGEPCT24HOUR}%</span></p>`;
 
-    const lastUpdate = document.createElement('P');
-    lastUpdate.innerHTML = `<p>Last update: <span>${LASTUPDATE}</span></p>`;
+	const lastUpdate = document.createElement('P');
+	lastUpdate.innerHTML = `<p>Last update: <span>${LASTUPDATE}</span></p>`;
 
-    resultDiv.appendChild(price);
-    resultDiv.appendChild(highPrice);
-    resultDiv.appendChild(lowPrice);
-    resultDiv.appendChild(lastHours);
-    resultDiv.appendChild(lastUpdate);
+	resultDiv.appendChild(price);
+	resultDiv.appendChild(highPrice);
+	resultDiv.appendChild(lowPrice);
+	resultDiv.appendChild(lastHours);
+	resultDiv.appendChild(lastUpdate);
 }
 
 /**
  * Clears the HTML content of the resultDiv element.
  */
 function clearHTML() {
-    while(resultDiv.firstChild) {
-        resultDiv.removeChild(resultDiv.firstChild);
-    }
+	while (resultDiv.firstChild) {
+		resultDiv.removeChild(resultDiv.firstChild);
+	}
 }
 
 /**
  * Displays a spinner on the page.
  */
 function spinner() {
-    clearHTML();
+	clearHTML();
 
-    const spinner = document.createElement('DIV');
-    spinner.classList.add('spinner');
+	const spinner = document.createElement('DIV');
+	spinner.classList.add('spinner');
 
-    spinner.innerHTML = `
+	spinner.innerHTML = `
         <div class="bounce1"></div>
         <div class="bounce2"></div>
         <div class="bounce3"></div>
     `;
 
-    resultDiv.appendChild(spinner);
+	resultDiv.appendChild(spinner);
 }
